@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Schedule.Infrastructure.Database.Entities;
+using Schedule.Domain.Entities;
 using System.Text.Json;
 
 namespace Schedule.Infrastructure.Database.Configuration;

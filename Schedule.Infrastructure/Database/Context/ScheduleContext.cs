@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Schedule.Infrastructure.Database.Configuration;
-using Schedule.Infrastructure.Database.Entities;
+using Schedule.Domain.Entities;
 
 namespace Schedule.Infrastructure.Database.Context;
 
@@ -11,7 +11,6 @@ public class ScheduleContext : DbContext
 
     public virtual DbSet<Meal> Meal { get; set; }
     public virtual DbSet<Day> Day { get; set; }
-    public virtual DbSet<Assignation> Assignation { get; set; }
 
 
     public ScheduleContext(DbContextOptions<ScheduleContext> options, IConfiguration configuration) : base(options)
@@ -32,6 +31,5 @@ public class ScheduleContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new MealConfiguration());
         modelBuilder.ApplyConfiguration(new DayConfiguration());
-        modelBuilder.ApplyConfiguration(new AssignationConfiguration());
     }
 }

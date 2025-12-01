@@ -5,38 +5,57 @@ namespace Schedule.Domain.UseCase;
 
 public class GetAllWeekIngredients : IGetAllWeekIngredients
 {
-    private readonly IAssignationService _assignationService;
-    private readonly IMealService _mealService;
+    private readonly IGetDayByNameService _getDayByNameService;
+    private readonly IGetMealByIdService _getMealByIdService;
 
     public GetAllWeekIngredients
     (
-        IAssignationService assignationService,
-        IMealService mealService
+        IGetDayByNameService getDayByNameService,
+        IGetMealByIdService getMealByIdService
     )
     {
-        _assignationService = assignationService;
-        _mealService = mealService;
+        _getDayByNameService = getDayByNameService;
+        _getMealByIdService = getMealByIdService;
     }
 
 
     public async Task<GetIngredientsListDto> GetAllIngredientsCase()
     {
-        List<int> dayIdList = [1, 2, 3, 4, 5, 6, 7];
+        List<string> dayist = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
         var ingredientList = new List<string>();
 
-        foreach ( int dayId in dayIdList)
+        foreach (string day in dayist)
         {
-            var assignation = await _assignationService.ReadAssignatedDays( dayId );
+            var assignation = await _getDayByNameService.GetDayByName(day);
 
-            if ( assignation != null)
+            if (assignation.AssignedMeal != null)
             {
-                var mealId = assignation.MealId;
+                var mealId = assignation.AssignedMeal.Value;
+                if (mealId <= 0)
+                    continue;
 
-                var meal = await _mealService.GetMealById( mealId );
+                var meal = await _getMealByIdService.GetById(mealId);
                 if (meal?.MealIngredients != null)
-                    ingredientList.AddRange(meal.MealIngredients);
+                {
+                    {
+                        foreach (var entry in meal.MealIngredients)
+                        {
+                            if (string.IsNullOrWhiteSpace(entry)) continue;
+
+                            var parts = entry
+                                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                            ingredientList.AddRange(parts);
+                        }
+                    }
+                }
             }
+        }
+
+        if (ingredientList.Count == 0)
+        {
+            throw new Exception("No hay ingredientes registrados para esta semana.");
         }
 
         var distinctIngredients = ingredientList

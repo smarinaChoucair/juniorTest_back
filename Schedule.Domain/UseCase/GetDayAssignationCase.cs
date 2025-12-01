@@ -1,35 +1,38 @@
-﻿using Schedule.Common.Mapper;
-using Schedule.Domain.Service;
+﻿using Schedule.Domain.Service;
 
 namespace Schedule.Domain.UseCase;
 
 public class GetDayAssignationCase : IGetDayAssignationCase
 {
-    private readonly IAssignationService _assignationService;
-    private readonly IMealService _mealService;
+    private readonly IGetDayByNameService _getDayByNameService;
+    private readonly IGetMealByIdService _getMealByIdService;
 
     public GetDayAssignationCase
     (
-        IAssignationService assignationService,
-        IMealService mealService
+        IGetDayByNameService getDayByNameService,
+        IGetMealByIdService getMealByIdService
     )
     {
-        _assignationService = assignationService;
-        _mealService = mealService;
+        _getDayByNameService = getDayByNameService;
+        _getMealByIdService = getMealByIdService;
     }
 
 
-    public async Task<string> GetMealAssign(string dayName)
+    public async Task<string?> GetMealAssign(string dayName)
     {
-        var dayId = DayMapper.ToDayId(dayName);
-        var assignated = await _assignationService.ReadAssignatedDays(dayId);
+        var day = await _getDayByNameService.GetDayByName(dayName);
 
-        if (assignated != null)
+        if (day != null)
         {
-            var assignatedMeal = await _mealService.GetMealById(assignated.MealId);
-            return assignatedMeal.MealName.ToString();
+            var assignatedMeal = day.AssignedMeal;
+
+            if (assignatedMeal == null)
+                return null;
+
+            var meal = await _getMealByIdService.GetById(assignatedMeal.Value);
+            return meal.MealName.ToString();
         }
 
-        return "null";
+        return null;
     }
 }

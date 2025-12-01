@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Schedule.Common\Schedule.Common.csproj" />
-    <ProjectReference Include="..\Schedule.Infrastructure\Schedule.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

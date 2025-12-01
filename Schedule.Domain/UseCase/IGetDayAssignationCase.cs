@@ -2,5 +2,5 @@
 
 public interface IGetDayAssignationCase
 {
-    Task<string> GetMealAssign(string dayName);
+    Task<string?> GetMealAssign(string dayName);
 }

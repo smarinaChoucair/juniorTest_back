@@ -1,22 +1,24 @@
 ﻿using Schedule.Common.DTOs;
-using Schedule.Common.Mapper;
 using Schedule.Domain.Service;
 
 namespace Schedule.Domain.UseCase;
 
 public class CreateMealCase : ICreateMealCase
 {
-    private readonly IMealService _mealService;
-    private readonly IAssignationService _assignationService;
+    private readonly ICreateMealService _createMealService;
+    private readonly IGetDayByNameService _getDayByNameService;
+    private readonly IAssingMealCase _assingExistingMealCase;
 
     public CreateMealCase
     (
-        IMealService mealService,
-        IAssignationService assignationService
+        ICreateMealService createMealService,
+        IGetDayByNameService getDayByNameService,
+        IAssingMealCase assingExistingMealCase
     )
     {
-        _mealService = mealService;
-        _assignationService = assignationService;
+        _createMealService = createMealService;
+        _getDayByNameService = getDayByNameService;
+        _assingExistingMealCase = assingExistingMealCase;
     }
 
 
@@ -24,26 +26,25 @@ public class CreateMealCase : ICreateMealCase
     {
         if (dto.DayName != null)
         {
-            int dayId = DayMapper.ToDayId(dto.DayName);
-            var exists = await _assignationService.ReadAssignatedDays(dayId);
+            var day = await _getDayByNameService.GetDayByName(dto.DayName);
 
-            if (exists != null)
-                throw new Exception($"Dia {exists.DayId} ya tiene un plato seleccionado");
+            if (day.AssignedMeal != null )
+                throw new Exception($"Dia {day.DayName} ya tiene un plato seleccionado");
 
-            var meal = await _mealService.CreateMealService(dto);
-            var assignation = await _assignationService.AssignateMealToDay(meal.MealId, dayId);
+            var mealId = await _createMealService.Create(dto);
+
+            var assignation = await _assingExistingMealCase.AssingMealCase(mealId, day.DayName);
 
             var response = new CreateMealResponseDto
             {
                 ResponseMessage = "Plato creado exitosamente",
-                DayAssigned = $"Registrado para el día {dto.DayName}"
+                DayAssigned = $"Registrado para el día {day.DayName}"
             };
 
             return response;
         }
 
-
-        var CreatedMeal = await _mealService.CreateMealService(dto);
+        var CreatedMeal = await _createMealService.Create(dto);
         var commonResponse = new CreateMealResponseDto
         {
             ResponseMessage = "Plato creado exitosamente"

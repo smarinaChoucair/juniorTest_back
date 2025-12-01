@@ -8,7 +8,7 @@ namespace Schedule.Web.Controllers;
 public class ScheduleController : ControllerBase
 {
     private readonly ICreateMealCase _createMealCase;
-    private readonly IAssingExistingMealCase _assingExistingMealCase;
+    private readonly IAssingMealCase _assingMealCase;
     private readonly IGetDayAssignationCase _getDayAssignationCase;
     private readonly IGetAllWeekIngredients _getAllWeekIngredients;
     private readonly IGetAllMealsCase _getAllMealsCase;
@@ -16,14 +16,14 @@ public class ScheduleController : ControllerBase
     public ScheduleController
     (
         ICreateMealCase createMealCase,
-        IAssingExistingMealCase assingExistingMealCase,
+        IAssingMealCase assingMealCase,
         IGetDayAssignationCase getDayAssignationCase,
         IGetAllWeekIngredients getAllWeekIngredients,
         IGetAllMealsCase getAllMealsCase
     )
     {
         _createMealCase = createMealCase;
-        _assingExistingMealCase = assingExistingMealCase;
+        _assingMealCase = assingMealCase;
         _getDayAssignationCase = getDayAssignationCase;
         _getAllWeekIngredients = getAllWeekIngredients;
         _getAllMealsCase = getAllMealsCase;
@@ -41,7 +41,7 @@ public class ScheduleController : ControllerBase
     [HttpPut("/meals/{id}/assign-day")]
     public async Task<AssignationResponseDto> AssingMeal([FromRoute] int id, [FromBody] AssingExistingMealDto dto)
     {
-        var result = await _assingExistingMealCase.AssingMealCase(id, dto);
+        var result = await _assingMealCase.AssingMealCase(id, dto.DayName);
         return result;
     }
 

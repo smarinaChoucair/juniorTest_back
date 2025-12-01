@@ -1,5 +1,4 @@
 ﻿using Schedule.Common.DTOs;
-using Schedule.Infrastructure.Database.Entities;
 
 namespace Schedule.Domain.UseCase;
 

@@ -1,4 +1,4 @@
-﻿namespace Schedule.Infrastructure.Database.Entities;
+﻿namespace Schedule.Domain.Entities;
 
 public class Meal
 {
@@ -7,5 +7,5 @@ public class Meal
     public List<string> MealIngredients { get; set; } = null!;
 
 
-    public ICollection<Assignation> Assignation { get; set; } = new List<Assignation>();
+    public ICollection<Day> Day { get; set; } = new List<Day>();
 }

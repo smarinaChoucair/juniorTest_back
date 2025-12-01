@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Schedule.Infrastructure.Database.Entities;
+using Schedule.Domain.Entities;
 
 namespace Schedule.Infrastructure.Database.Configuration;
 
@@ -16,7 +16,12 @@ public class DayConfiguration : IEntityTypeConfiguration<Day>
 
         builder.Property(d => d.DayName)
             .IsRequired()
-            .HasMaxLength(250);
+            .HasMaxLength(20);
+
+
+        builder.HasOne(d => d.Meal)
+            .WithMany(m => m.Day)
+            .HasForeignKey(d => d.AssignedMeal);
 
 
         builder.HasData(

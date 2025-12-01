@@ -2,5 +2,5 @@
 
 public class AssingExistingMealDto
 {
-    public string Day { get; set; } = null!;
+    public string DayName { get; set; } = null!;
 }

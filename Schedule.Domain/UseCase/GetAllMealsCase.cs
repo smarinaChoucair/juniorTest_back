@@ -5,19 +5,19 @@ namespace Schedule.Domain.UseCase;
 
 public class GetAllMealsCase : IGetAllMealsCase
 {
-    private readonly IMealService _mealService;
+    private readonly IGetAllMealsService _getAllMealsService;
     public GetAllMealsCase
     (
-        IMealService mealService
+        IGetAllMealsService getAllMealsService
     )
     {
-        _mealService = mealService;
+        _getAllMealsService = getAllMealsService;
     }
 
 
     public async Task<MealsListDto> GetAllMeals()
     {
-        var meals = await _mealService.GetAllMeals();
+        var meals = await _getAllMealsService.GetAll();
 
         var mealList = new MealsListDto
         {
